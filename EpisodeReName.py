@@ -9,7 +9,9 @@ from datetime import datetime
 from itertools import product
 
 from utils.resolution_util import get_resolution_in_name
-
+from utils.group_util import get_group_in_name
+from utils.encode_util import get_encode_in_name
+from utils.stream_util import get_stream_in_name
 try:
     from loguru import logger
 except:
@@ -108,10 +110,10 @@ else:
                     type=int,
                     default=1)
     ap.add_argument('--name_format', required=False,
-                    help='(慎用) 自定义重命名格式, 参数需要加引号 默认为 "S{season}E{ep}" 可以选择性加入 系列名称如 "{series} - S{season}E{ep}" ',
+                    help='(慎用) 自定义重命名格式, 参数需要加引号 默认为 "S{season}E{ep}" 可以选择性加入 系列名称如。参数 {group} {encode} {stream} "{series} - S{season}E{ep}" ',
                     default='S{season}E{ep}')
     ap.add_argument('--parse_resolution', required=False,
-                    help='(慎用) 识别分辨率，输出结果类似于 `S01E01 - 1080p.mp4`, 1为开启, 0为不开启. 开启后传入的 name_format 参数会失效, 强制设置为 "S{season}E{ep} - {resolution}"',
+                    help='(慎用) 识别分辨率，输出结果类似于 `S01E01 - 1080p.mp4`, 1为开启, 0为不开启.',
                     default=0)
     ap.add_argument('--force_rename', required=False,
                     help='(慎用) 即使已经是标准命名, 也强制重新改名, 默认为0不开启, 1是开启', type=int,
@@ -125,12 +127,13 @@ else:
     rename_delay = args['delay']
     rename_overwrite = args['overwrite']
     name_format = args['name_format']
+    print(name_format)
     parse_resolution = args['parse_resolution']
     force_rename = args['force_rename']
     custom_replace_pair = args['replace']
 
-    if parse_resolution:
-        name_format = 'S{season}E{ep} - {resolution}'
+    # if parse_resolution:
+        # name_format = 'S{season}E{ep} - {resolution}'
 
 if not target_path:
     # 没有路径参数直接退出
@@ -162,6 +165,7 @@ COMMON_MEDIA_EXTS = [
     'rmvb',
     'm2ts',
     'wmv',
+    'ts'
 ]
 
 # 字幕文件
@@ -717,6 +721,10 @@ if os.path.isdir(target_path):
             parent_folder_path = os.path.dirname(file_path)
             season, ep = get_season_and_ep(file_path)
             resolution = get_resolution_in_name(name)
+            if '{group}' in name_format:
+                group = get_group_in_name(name)
+            stream = get_stream_in_name(name)
+            encode = get_encode_in_name(name)
             logger.info(f'{season, ep}')
             # 重命名
             if season and ep:
@@ -727,6 +735,14 @@ if os.path.isdir(target_path):
                 series = get_series_from_season_path(season_path)
                 # new_name = f'S{season}E{ep}' + '.' + fix_ext(ext)
                 new_name = clean_name(name_format.format(**locals())) + '.' + fix_ext(ext)
+                try:
+                    new_name = new_name.replace('__', '_')
+                except:
+                    pass
+                try:
+                    new_name = new_name.replace('-_', '-')
+                except:
+                    pass
 
                 if custom_replace_pair:
                     # 自定义替换关键字
