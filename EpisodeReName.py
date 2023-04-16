@@ -735,18 +735,9 @@ if os.path.isdir(target_path):
                 series = get_series_from_season_path(season_path)
                 # new_name = f'S{season}E{ep}' + '.' + fix_ext(ext)
                 new_name = clean_name(name_format.format(**locals())) + '.' + fix_ext(ext)
-                try:
-                    new_name = new_name.replace('__', '_')
-                except:
-                    pass
-                try:
-                    new_name = new_name.replace('-_', '-')
-                except:
-                    pass
-                try:
-                    new_name = new_name.rstrip('_')
-                except:
-                    pass
+                new_name = new_name.replace('__', '_')
+                new_name = new_name.replace('- _', '-')
+                new_name = new_name.rstrip('_')
 
 
                 if custom_replace_pair:
@@ -790,18 +781,10 @@ else:
                 # 自定义替换关键字
                 for replace_old_part, replace_new_part in custom_replace_pair:
                     new_name = new_name.replace(replace_old_part, replace_new_part)
-            try:
+
                 new_name = new_name.replace('__', '_')
-            except:
-                pass
-            try:
-                new_name = new_name.replace('-_', '-')
-            except:
-                pass
-            try:
+                new_name = new_name.replace('- _', '-')
                 new_name = new_name.rstrip('_')
-            except:
-                pass
 
             logger.info(f'{new_name}')
             if move_up_to_season_folder:
