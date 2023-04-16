@@ -3,9 +3,13 @@ import feedparser
 
 def get_nc_name():
     # 获取 NC_Raws 组名
+    nc_name = ''
     nc_rss_url = ['https://ouo.si/feed?page=rss', 'https://ouo.si/feed?page=rss', 'https://acg.rip/user/5570.xml', 'https://bangumi.moe/rss/tags/63e4b7585fa12c0007949b88', 'https://share.acgnx.se/rss-user-529.xml']
     for i in range(0,len(nc_rss_url)):
-        feed = feedparser.parse(nc_rss_url[i])
+        try:
+            feed = feedparser.parse(nc_rss_url[i])
+        except:
+            continue
         try:
             first_item_title = feed.entries[0].title
         except IndexError:

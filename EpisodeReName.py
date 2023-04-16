@@ -773,6 +773,10 @@ else:
     if ext.lower() in COMPOUND_EXTS:
         season, ep = get_season_and_ep(file_path)
         resolution = get_resolution_in_name(file_name)
+        if '{group}' in name_format:
+            group = get_group_in_name(file_name)
+        stream = get_stream_in_name(file_name)
+        encode = get_encode_in_name(file_name)
         if season and ep:
             # 修正集数
             ep = ep_offset_patch(file_path, ep)
@@ -786,6 +790,18 @@ else:
                 # 自定义替换关键字
                 for replace_old_part, replace_new_part in custom_replace_pair:
                     new_name = new_name.replace(replace_old_part, replace_new_part)
+            try:
+                new_name = new_name.replace('__', '_')
+            except:
+                pass
+            try:
+                new_name = new_name.replace('-_', '-')
+            except:
+                pass
+            try:
+                new_name = new_name.rstrip('_')
+            except:
+                pass
 
             logger.info(f'{new_name}')
             if move_up_to_season_folder:
