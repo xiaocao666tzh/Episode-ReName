@@ -25,14 +25,16 @@ def get_nc_name():
         nc_name = None
     return nc_name
 
+
 nc_name = get_nc_name()
 
-group_list = ['Lilith-Raws', '[Ani]', 'SubsPlease', 'Ohys-Raws', '喵萌', 'LoliHouse', '豌豆', '桜都', '7³ACG', '银色子弹', 'SweetSub', '千夏', '动漫国', 'VCB', '悠哈璃羽']
+group_list = ['Lilith-Raws', '[Ani]', 'SubsPlease', 'Ohys-Raws', '喵萌', 'LoliHouse', '豌豆', '桜都', '7³ACG', '银色子弹', 'SweetSub', '千夏', '动漫国', 'VCB', '悠哈璃羽', '字幕组', '字幕社', 'Raws']
 
 if nc_name != None:
     group_list.append(nc_name)
 
 def get_group_in_name(name):
+    # 适配 0day 命名方式资源
     for i in group_list:
         if i in name:
             if i == nc_name:
@@ -47,9 +49,22 @@ def get_group_in_name(name):
                     return group
             else:
                 return i
+    # 适配PT命名方式
+    try:
+        group = name[-15:]
+    except:
+        group = name
+    if group.rfind('@') != -1:
+        group = group[int(group.rfind('@'))+1:]
+        return group
+    elif group.rfind('-') != -1:
+        group = group[int(group.rfind('-'))+1:]
+        return group
+    else:
+        return ''
 
 if __name__ == '__main__':
-    print(get_group_in_name("【推しの子】 我內心的糟糕念頭 / Boku no Kokoro no Yabai Yatsu - 03 (Sentai 1920x1080 AVC AAC MKV)"))
+    print(get_group_in_name("aaa-test"))
     # 批量测试
     folder = '/home/nate/data/极端试验样本/'
     for root, dirs, files in os.walk(folder):
