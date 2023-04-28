@@ -12,7 +12,7 @@ def get_stream_in_name(name):
     for i in range(0, len(stream_file_name)):
         if stream_file_name[i] in file_full_name_up:
             return stream_output_name[i]
-    return 'None'
+    return ''
 
 if __name__ == '__main__':
     print(get_stream_in_name('【推しの子】 小鳥之翼 第二季 / Birdie Wing: Golf Girls Story S2 - 15 (CR 1920x1080 AVC AAC MKV)'))
