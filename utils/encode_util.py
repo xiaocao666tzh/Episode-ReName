@@ -3,7 +3,11 @@ import os
 encode_dict = {
     '.DV.': 'DolbyVision',
     ' DV ': 'Dolby Vision',
-    'HDR': 'HDR',
+    'DoVi': 'Dolby Vision',
+    '60FPS': '60fps',
+    'HDR10+': 'HDR10+',
+    '.HDR.': 'HDR',
+    ' HDR ': 'HDR',
     '10BIT': '10bit',
     'HEVC': 'HEVC',
     'BLURAY': 'BluRay',
