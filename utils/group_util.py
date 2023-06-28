@@ -8,12 +8,15 @@ def get_nc_name():
     nc_name = ''
     with open('nc_raws_auto.txt', 'r') as f:
         nc_txt = f.read()
-        nc_name_local, lasttime = nc_txt.split('\n')
-        lasttime = int(lasttime)
-        print(nc_txt, nc_name_local, lasttime)
-    if time.time() - lasttime <= 300:
-        nc_name = nc_name_local
-        return nc_name
+        try:
+            nc_name_local, lasttime = nc_txt.split('\n')
+            lasttime = int(lasttime)
+            print(nc_txt, nc_name_local, lasttime)
+            if time.time() - lasttime <= 300:
+                nc_name = nc_name_local
+                return nc_name
+        except:
+            pass
     else:
         nc_rss_url = ['https://ouo.si/feed?page=rss', 'https://ouo.si/feed?page=rss', 'https://acg.rip/user/5570.xml', 'https://bangumi.moe/rss/tags/63e4b7585fa12c0007949b88', 'https://share.acgnx.se/rss-user-529.xml']
         for i in range(0, len(nc_rss_url)):
