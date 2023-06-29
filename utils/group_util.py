@@ -6,7 +6,10 @@ import time
 def get_nc_name():
     # 获取 NC_Raws 组名
     nc_name = ''
-    with open('nc_raws_auto.txt', 'r') as f:
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    print(current_dir)
+    nc_txt_path = current_dir + '/nc_raws_auto.txt'
+    with open(nc_txt_path, 'r') as f:
         nc_txt = f.read()
         try:
             nc_name_local, lasttime = nc_txt.split('\n')
@@ -17,7 +20,6 @@ def get_nc_name():
                 return nc_name
         except:
             pass
-    else:
         nc_rss_url = ['https://ouo.si/feed?page=rss', 'https://ouo.si/feed?page=rss', 'https://acg.rip/user/5570.xml', 'https://bangumi.moe/rss/tags/63e4b7585fa12c0007949b88', 'https://share.acgnx.se/rss-user-529.xml']
         for i in range(0, len(nc_rss_url)):
             try:
@@ -42,7 +44,7 @@ def get_nc_name():
     if nc_name == '':
         nc_name = None
     else:
-        with open('nc_raws_auto.txt', 'w') as f:
+        with open(nc_txt_path, 'w') as f:
             f.write(nc_name + '\n' + str(int(time.time())))
     return nc_name
 
