@@ -138,5 +138,3 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-utils/nc_raws_auto.txt
-test/test.py

@@ -723,7 +723,7 @@ if os.path.isdir(target_path):
             season, ep = get_season_and_ep(file_path)
             resolution = get_resolution_in_name(name)
             if '{group}' in name_format:
-                group = get_group_in_name(name)
+                group = get_group_in_name(file_name)
             stream = get_stream_in_name(name)
             encode = get_encode_in_name(name)
             logger.info(f'{season, ep}')
@@ -764,7 +764,7 @@ else:
         season, ep = get_season_and_ep(file_path)
         resolution = get_resolution_in_name(file_name)
         if '{group}' in name_format:
-            group = get_group_in_name(name)
+            group = get_group_in_name(file_name)
         stream = get_stream_in_name(file_name)
         encode = get_encode_in_name(file_name)
         if season and ep:
