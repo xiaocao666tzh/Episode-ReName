@@ -1,4 +1,5 @@
 # 📝 Episode-ReName
+**README暂未更新，如需使用请先查看commit**
 
 [![Github all releases](https://img.shields.io/github/downloads/Nriver/Episode-ReName/total.svg)](https://GitHub.com/Nriver/Episode-ReName/releases/)
 [![GitHub license](https://badgen.net/github/license/Nriver/Episode-ReName)](https://github.com/Nriver/Episode-ReName/blob/master/LICENSE)
