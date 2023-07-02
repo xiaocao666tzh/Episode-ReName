@@ -7,7 +7,6 @@ def get_nc_name():
     # 获取 NC_Raws 组名
     nc_name = ''
     current_dir = os.path.dirname(os.path.abspath(__file__))
-    print(current_dir)
     nc_txt_path = current_dir + '/nc_raws_auto.txt'
     with open(nc_txt_path, 'r') as f:
         nc_txt = f.read()
@@ -73,7 +72,7 @@ group_dict = {'Nekomoe kissaten': '喵萌',
 def get_group_in_name(name):
     if os.path.isabs(name):
         name = os.path.basename(name)
-        name = os.path.splitext(name)[0]
+        name = os.path.splitext(name)[-1]
     # 适配 0day 命名方式资源
     if name.find('[') == 0:
         group = name.split("[")[1].split("]")[0]
@@ -101,7 +100,7 @@ def get_group_in_name(name):
 
 
 if __name__ == '__main__':
-    print(get_group_in_name("[GJ.Y] BanG Dream! It's MyGO!!!!! - 02 (Baha 1920x1080 AVC AAC MP4) [D5390003].mp4"))
+    print(get_group_in_name("D:\Software\Documents\GitHub\Episode-ReName/test\s01/Ars no Kyojuu S01E01-[1080p][BDRIP][x265.FLAC].mkv"))
     # 批量测试
     folder = '/home/nate/data/极端试验样本/'
     for root, dirs, files in os.walk(folder):
