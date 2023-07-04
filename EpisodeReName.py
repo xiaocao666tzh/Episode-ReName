@@ -727,7 +727,7 @@ if os.path.isdir(target_path):
                 if group == '' and file_path.find('7³ACG'):
                     group = '7³ACG'
             stream = get_stream_in_name(name)
-            if file_name.find('VCB-Studio'):
+            if file_name.find('VCB-Studio') == True:
                 stream = 'BDRip'
             encode = get_encode_in_name(name)
             logger.info(f'{season, ep}')
@@ -773,7 +773,7 @@ else:
                 group = '7³ACG'
         stream = get_stream_in_name(file_name)
         encode = get_encode_in_name(file_name)
-        if file_name.find('VCB-Studio'):
+        if file_name.find('VCB-Studio') == True:
             stream = 'BDRip'
         if season and ep:
             # 修正集数
