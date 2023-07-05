@@ -724,7 +724,7 @@ if os.path.isdir(target_path):
             resolution = get_resolution_in_name(name)
             if '{group}' in name_format:
                 group = get_group_in_name(file_name)
-                if group == '' and file_path.find('7³ACG'):
+                if group == '' and file_path.find('7³ACG') != -1:
                     group = '7³ACG'
             stream = get_stream_in_name(name)
             if file_name.find('VCB-Studio') == True:
@@ -769,7 +769,7 @@ else:
         resolution = get_resolution_in_name(file_name)
         if '{group}' in name_format:
             group = get_group_in_name(file_name)
-            if group == '' and file_path.find('7³ACG'):
+            if group == '' and file_path.find('7³ACG') != -1:
                 group = '7³ACG'
         stream = get_stream_in_name(file_name)
         encode = get_encode_in_name(file_name)
