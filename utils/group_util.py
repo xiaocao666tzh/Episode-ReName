@@ -2,6 +2,16 @@ import os
 import feedparser
 import re
 import time
+try:
+    from loguru import logger
+except:
+    # 兼容无loguru模块的环境，例如docker和群晖
+    class logger:
+        def info(s):
+            print(f'| INFO     | {s}')
+
+        def warning(s):
+            print(f'| WARNING  | {s}')
 
 def get_nc_name():
     # 获取 NC_Raws 组名
@@ -49,6 +59,7 @@ def get_nc_name():
 
 
 nc_name = get_nc_name()
+logger.info(f'NC-Raws组名为{nc_name}')
 
 
 group_dict = {'Nekomoe kissaten': '喵萌',
@@ -73,6 +84,7 @@ def get_group_in_name(name):
     if os.path.isabs(name):
         name = os.path.basename(name)
         name = os.path.splitext(name)[-1]
+        logger.info(f'获取group，name为{name}')
     # 适配 0day 命名方式资源
     if name.find('[') == 0:
         group = name.split("[")[1].split("]")[0]
@@ -83,6 +95,7 @@ def get_group_in_name(name):
         group = name.split("【")[1].split("】")[0]
         regex = re.compile('|'.join(map(re.escape, group_dict)))
         group = regex.sub(lambda match: group_dict[match.group(0)], group)
+        logger.info(f'获取到的组名为{group}')
         return group
     # 适配PT命名方式
     try:
