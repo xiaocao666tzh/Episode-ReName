@@ -82,7 +82,8 @@ group_dict = {'Nekomoe kissaten': '喵萌',
 def get_group_in_name(name):
     if os.path.isabs(name):
         name = os.path.basename(name)
-    name = os.path.splitext(name)[0]
+        # name = os.path.splitext(name)[-1]
+        # logger.info(f'获取group，name为{name}')
     # 适配 0day 命名方式资源
     if name.find('[') == 0:
         group = name.split("[")[1].split("]")[0]
