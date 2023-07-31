@@ -57,29 +57,30 @@ def get_nc_name():
     return nc_name
 
 
-nc_name = get_nc_name()
-logger.info(f'NC-Raws组名为{nc_name}')
+def get_group_in_name(name, no_ncaraws=0):
+    if no_ncaraws == 1:
+        nc_name = 'NC-Raws'
+        logger.info(f'不获取NC-Raws组名')
+    else:
+        nc_name = get_nc_name()
+        logger.info(f'NC-Raws组名为{nc_name}')
+    group_dict = {'Nekomoe kissaten': '喵萌',
+                  'BeanSub': '豌豆',
+                  'FZSD': '风之圣殿',
+                  nc_name: 'NC-Raws',
+                  'Sakurato': '桜都',
+                  'SBSUB': '银色子弹',
+                  'Airota': '千夏',
+                  'DMG': '动漫国',
+                  'UHA-WINGS': '悠哈璃羽',
+                  'XKSub': '星空',
+                  'orion origin': '猎户',
+                  'KissSub': '爱恋',
+                  'KTXP': '极影',
+                  'Suzu-Kaze': '铃风',
+                  'WMSUB': '风车',
+                  'Skymoon-Raws': '天月'}
 
-
-group_dict = {'Nekomoe kissaten': '喵萌',
-              'BeanSub': '豌豆',
-              'FZSD': '风之圣殿',
-              nc_name: 'NC-Raws',
-              'Sakurato': '桜都',
-              'SBSUB': '银色子弹',
-              'Airota': '千夏',
-              'DMG': '动漫国',
-              'UHA-WINGS': '悠哈璃羽',
-              'XKSub': '星空',
-              'orion origin': '猎户',
-              'KissSub': '爱恋',
-              'KTXP': '极影',
-              'Suzu-Kaze': '铃风',
-              'WMSUB': '风车',
-              'Skymoon-Raws': '天月'}
-
-
-def get_group_in_name(name):
     if os.path.isabs(name):
         name = os.path.basename(name)
         # name = os.path.splitext(name)[-1]

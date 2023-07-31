@@ -100,6 +100,7 @@ if len(sys.argv) > 1 and not sys.argv[1].startswith('-'):
     name_format = 'S{season}E{ep}'
     force_rename = 0
     custom_replace_pair = ""
+    get_nc_name = 0
 else:
     # 新的argparse解析
     # python EpisodeReName.py --path E:\test\极端试验样本\S1 --delay 1 --overwrite 1
@@ -127,6 +128,9 @@ else:
     ap.add_argument('--replace', required=False, type=str, nargs='+', action='append',
                     help='自定义替换关键字, 一般是给字幕用, 用法 `--replace chs chi --replace cht chi` 就能把chs和cht替换成chi, 可以写多组关键字',
                     default=[])
+    ap.add_argument('--no_ncraws', required=False,
+                    help='是否识别NC_Raws组的命名，默认为0识别，1是不识别', type=int,
+                    default=0)
 
     args = vars(ap.parse_args())
     target_path = args['path']
@@ -137,6 +141,7 @@ else:
     parse_resolution = args['parse_resolution']
     force_rename = args['force_rename']
     custom_replace_pair = args['replace']
+    get_nc_name = args['no_ncraws']
 
     # if parse_resolution:
         # name_format = 'S{season}E{ep} - {resolution}'
@@ -740,7 +745,7 @@ if os.path.isdir(target_path):
             season, ep = get_season_and_ep(file_path)
             resolution = get_resolution_in_name(name)
             if '{group}' in name_format:
-                group = get_group_in_name(file_name)
+                group = get_group_in_name(file_name, get_nc_name)
                 if group == '' and file_path.find('7³ACG') != -1:
                     group = '7³ACG'
             stream = get_stream_in_name(name)
