@@ -843,7 +843,7 @@ old_list = set([x[0] for x in file_lists])
 new_list = set([x[1] for x in file_lists])
 if len(old_list) != len(new_list):
     logger.warning(f"{'旧文件数量和新文件数量不一致，可能会被覆盖。请检查文件命名'}")
-    sys.exit()
+    #sys.exit() 不退出而是继续重命名，适应直接R VCB等组的时候
 
 # 错误记录
 error_logs = []
