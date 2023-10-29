@@ -769,7 +769,8 @@ if os.path.isdir(target_path):
                     for replace_old_part, replace_new_part in custom_replace_pair:
                         new_name = new_name.replace(replace_old_part, replace_new_part)
 
-                new_name = new_name.replace('__', '_').replace('- _', '-').rstrip('_')
+                while '__' in new_name or '-_' in new_name:
+                    new_name = new_name.replace('__', '_').replace('- _', '-').rstrip('_')
                 logger.info(f'{new_name}')
                 if move_up_to_season_folder:
                     new_path = season_path + '/' + new_name
@@ -807,7 +808,8 @@ else:
             series = get_series_from_season_path(season_path)
             # new_name = f'S{season}E{ep}' + '.' + fix_ext(ext)
             new_name = clean_name(name_format.format(**locals())) + '.' + fix_ext(ext)
-            new_name = new_name.replace('__', '_').replace('- _', '-').rstrip('_')
+            while '__' in new_name or '-_' in new_name:
+                new_name = new_name.replace('__', '_').replace('- _', '-').rstrip('_')
 
             if custom_replace_pair:
                 # 自定义替换关键字
