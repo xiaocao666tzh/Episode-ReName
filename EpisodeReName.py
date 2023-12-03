@@ -174,7 +174,8 @@ COMMON_MEDIA_EXTS = [
     'rmvb',
     'm2ts',
     'wmv',
-    'ts'
+    'ts',
+    'tp'
 ]
 
 # 字幕文件
