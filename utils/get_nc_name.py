@@ -25,5 +25,5 @@ for i in range(0, len(nc_rss_url)):
 if nc_name == '':
     nc_name = None
 else:
-    with open('nc_raws_auto.txt', 'w') as f:
+    with open('nc_raws_auto.txt', 'w', encoding='utf-8') as f:
         f.write(nc_name + '\n' + str(int(time.time())))

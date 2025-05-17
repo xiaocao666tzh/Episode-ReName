@@ -18,7 +18,7 @@ def get_nc_name():
     nc_name = ''
     current_dir = os.path.dirname(os.path.abspath(__file__))
     nc_txt_path = current_dir + '/nc_raws_auto.txt'
-    with open(nc_txt_path, 'r') as f:
+    with open(nc_txt_path, 'r', encoding='utf-8') as f:
         nc_txt = f.read()
         try:
             nc_name_local, lasttime = nc_txt.split('\n')
@@ -52,7 +52,7 @@ def get_nc_name():
     if nc_name == '':
         nc_name = None
     else:
-        with open(nc_txt_path, 'w') as f:
+        with open(nc_txt_path, 'w', encoding='utf-8') as f:
             f.write(nc_name + '\n' + str(int(time.time())))
     return nc_name
 
