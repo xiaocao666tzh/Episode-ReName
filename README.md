@@ -1,6 +1,10 @@
 # 📝 Episode-ReName
 **README暂未更新，如需使用请先查看commit**
 
+<p align="center">
+  <img src="docs/logo.webp" alt="Episode-ReName Logo" width="200">
+</p>
+
 [![Github all releases](https://img.shields.io/github/downloads/Nriver/Episode-ReName/total.svg)](https://GitHub.com/Nriver/Episode-ReName/releases/)
 [![GitHub license](https://badgen.net/github/license/Nriver/Episode-ReName)](https://github.com/Nriver/Episode-ReName/blob/master/LICENSE)
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/Nriver/Episode-ReName/graphs/commit-activity)
@@ -22,8 +26,6 @@ Manager 等软件刮削数据使用. 也可以配合qbitorrent下载文件后自
 关于文件命名规范请参考[强制的规范元数据结构](https://github.com/Nriver/Episode-ReName#强制的规范元数据结构).
 
 注意3: 请不将本程序放在含有空格的路径中, 路径可以有中文但是不能有空格, 切记！
-
-<a href="https://github.com/Nriver"><img align="center" src="https://moe-counter--nriver1.repl.co/get/@Nriver_Episode-ReName"></a><br>
 
 # 🦮 目录
 
@@ -78,19 +80,22 @@ Manager 等软件刮削数据使用. 也可以配合qbitorrent下载文件后自
 2. 选项—>下载—>完成时运行外部程序—>命令行
 
 ```
-D:\Test\EpisodeReName.exe "%D" 15
+D:\Test\EpisodeReName.exe --path "%F" --delay 15 --overwrite 1 --use_folder_as_season 1
 ```
 
 参数说明
 
 - EpisodeReName工具所在路径
-- "%D"是文件下载路径, 这个一般不要修改
-- 最后的数字是执行延时, 单位是秒, 因为qb下载完成会锁住文件, 需要等一段时间来让它释放, 时间长短可自行调整
+- --path 是文件下载路径, "%F"是下载的子目录或子文件路径，比使用"%D"效果更好。
+- --delay 这个数字是执行延时, 单位是秒, 因为qb下载完成会锁住文件, 需要等一段时间来让它释放, 时间长短可自行调整。
+- --overwrite 1 是强制重命名。
+- --use_folder_as_season 是根据路径获取季数。
 
-以上为简易参数, 需要其它功能请参考下面的复杂参数模式
+
+如果重命名遇到问题，需要更详细的日志输出来定位问题，可以添加日志参数：
 
 ```
-D:\Test\EpisodeReName.exe --path "%D" --delay 15 --overwrite 1
+D:\Test\EpisodeReName.exe --path "%F" --delay 15 --overwrite 1 --use_folder_as_season 1 --log_to_file 1 --log_level DEBUG
 ```
 
 具体参数请看下面的`复杂参数模式`章节
@@ -104,7 +109,13 @@ D:\Test\EpisodeReName.exe --path "%D" --delay 15 --overwrite 1
    下面填上
 
 ```
-/usr/local/bin/python3 /var/services/homes/admin/EpisodeReName.py --path "%D" --delay 15 --overwrite 1
+/usr/local/bin/python3 /var/services/homes/admin/EpisodeReName.py --path "%F" --delay 15 --overwrite 1
+```
+
+如需更详细的日志输出，可以添加日志参数：
+
+```
+/usr/local/bin/python3 /var/services/homes/admin/EpisodeReName.py --path "%F" --delay 15 --overwrite 1 --log_to_file 1 --log_level DEBUG
 ```
 
 4. 取消做种，修改qb配置: `BitTorrent` 的 `做种限制` 改成 当分享率达到0，当做种时间达到0分钟然后暂停torrent
@@ -134,7 +145,13 @@ docker cp custom_rules.py qbittorrentee:/
    下面填上
 
 ```
-python3 /EpisodeReName.py --path "%D" --delay 15 --overwrite 1
+python3 /EpisodeReName.py --path "%F" --delay 15 --use_folder_as_season 1 --overwrite 1
+```
+
+如需更详细的日志输出，可以添加日志参数：
+
+```
+python3 /EpisodeReName.py --path "%F" --delay 15 --use_folder_as_season 1 --overwrite 1 --log_to_file 1 --log_level DEBUG
 ```
 
 4. 取消做种，修改qb配置: `BitTorrent` 的 `做种限制` 改成 当分享率达到0，当做种时间达到0分钟然后暂停torrent
@@ -175,6 +192,36 @@ EpisodeReName.exe --path D:\down\XXX\s2 --parse_resolution 1
 EpisodeReName.exe --path D:\down\XXX\s2 --name_format "S{season}E{ep} - {resolution}"
 ```
 
+忽略旧文件数量和新文件数量不一致的检查，即使可能会覆盖文件也继续执行
+
+```
+EpisodeReName.exe --path D:\down\XXX\s2 --ignore_file_count_check 1
+```
+
+设置每次重命名操作之间的间隔时间，避免网盘挂载模式下重命名太快而客户端未及时响应导致重命名异常
+
+```
+EpisodeReName.exe --path D:\down\XXX\s2 --rename_interval 0.1
+```
+
+控制是否将日志输出到文件，默认为0关闭，1为开启。关闭时只在控制台显示日志
+
+```
+EpisodeReName.exe --path D:\down\XXX\s2 --log_to_file 1
+```
+
+设置日志输出等级，可选值: DEBUG, INFO, WARNING, ERROR, CRITICAL。默认为INFO
+
+```
+EpisodeReName.exe --path D:\down\XXX\s2 --log_level DEBUG
+```
+
+同时设置日志输出到文件并使用DEBUG等级，可以获取更详细的日志信息，日志文件位于主程序同目录的`app.log`文件内
+
+```
+EpisodeReName.exe --path D:\down\XXX\s2 --log_to_file 1 --log_level DEBUG
+```
+
 使用 `-h` 参数查看支持的参数
 
 ```
@@ -189,10 +236,28 @@ D:\Test\EpisodeReName.exe -h
   --overwrite OVERWRITE
                         强制重命名, 默认为1开启覆盖模式, 0为不覆盖, 遇到同名文件会跳过, 结果输出到error.txt
   --name_format NAME_FORMAT
-                        (慎用) 自定义重命名格式, 参数需要加引号 默认为 "S{season}E{ep}" 可以选择性加入 series系列名称 如 "{series} - S{season}E{ep}"
-                        可以加入分辨率解析，程序会尝试从文件名提取分辨率 如 "S{season}E{ep} - {resolution}"
+                        (慎用) 自定义重命名格式, 参数需要加引号 默认为 "S{season}E{ep}" 可以选择性加入 系列名称如 "{series} - S{season}E{ep}"
+  --name_format_bypass NAME_FORMAT_BYPASS
+                        (慎用) 自定义重命名格式, 对满足格式的文件忽略重命名步骤
+  --parse_resolution PARSE_RESOLUTION
+                        (慎用) 识别分辨率，输出结果类似于 `S01E01 - 1080p.mp4`, 1为开启, 0为不开启. 开启后传入的 name_format 参数会失效, 强制设置为
+                        "S{season}E{ep} - {resolution}"
   --force_rename FORCE_RENAME
                         (慎用) 即使已经是标准命名, 也强制重新改名, 默认为0不开启, 1是开启
+  --replace REPLACE [REPLACE ...]
+                        自定义替换关键字, 一般是给字幕用, 用法 `--replace chs chi --replace cht chi` 就能把chs和cht替换 成chi, 可以写多组关键字
+  --use_folder_as_season USE_FOLDER_AS_SEASON
+                        优先使用父级文件夹中的季数来代替文件名中的季数, 默认为0不开启, 1是开启
+  --del_empty_folder DEL_EMPTY_FOLDER
+                        删除空的子目录, 默认为0不开启, 1是开启
+  --ignore_file_count_check IGNORE_FILE_COUNT_CHECK
+                        忽略旧文件数量和新文件数量不一致的检查，即使可能会覆盖文件也继续执行。默认为0不开启, 1是开启
+  --rename_interval RENAME_INTERVAL
+                        每次重命名操作之间的间隔时间(秒)，用于网盘挂载等情况下避免重命名太快而客户端未及时响应导致重命名异常。默认为0秒不等待
+  --log_to_file LOG_TO_FILE
+                        是否将日志输出到文件，默认为0关闭，1为开启。关闭时只在控制台显示日志
+  --log_level {DEBUG,INFO,WARNING,ERROR,CRITICAL}
+                        设置日志输出等级，可选值: DEBUG, INFO, WARNING, ERROR, CRITICAL。默认为INFO
 ```
 
 # 使用场景6 - 🐧 Linux终端运行
@@ -303,10 +368,10 @@ pyinstaller -F -w EpisodeReName.py
 
 如果你觉得我做的程序对你有帮助, 欢迎捐赠, 这对我来说是莫大的鼓励!
 
-支付宝:  
+支付宝:
 ![Alipay](docs/alipay.png)
 
-微信:  
+微信:
 ![Wechat Pay](docs/wechat_pay.png)
 
 ---
@@ -324,6 +389,8 @@ pyinstaller -F -w EpisodeReName.py
 感谢 `*睿` 赞助的5元! 备注: 感谢您的自动命名工具
 
 感谢 `*メ` 赞助的200元!
+
+感谢 `A*` 赞助的100元! 备注: 非常感謝你寫這個小程式，捐贈了小小的心意給你及保重身體!
 
 感谢Jetbrins公司提供的Pycharm编辑器!
 
