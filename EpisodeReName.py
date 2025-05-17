@@ -7,7 +7,7 @@ import time
 from datetime import datetime
 from itertools import product
 
-from utils.resolution_util import get_resolution_in_name
+from utils.resolution_utils import get_resolution_in_name
 from utils.group_util import get_group_in_name
 from utils.encode_util import get_encode_in_name
 from utils.stream_util import get_stream_in_name
