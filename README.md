@@ -1,5 +1,11 @@
 # 📝 Episode-ReName
-**README暂未更新，如需使用请先查看commit**
+本分支根据个人需求进行部分修改，暂不打算在Realease发布打包版，如有需要请自行打包。
+## 新增内容
+- name_format 支持 {group} {stream} {encode} 分别对应制作组/字幕组，流媒体，视频编码
+- 由于 NC_Raws （写本文时名为 黒ネズミたち）经常改名的特性，加入 --no_ncraws 方法，默认为0识别，1为不识别
+
+## 以下内容均为原作者README，未进行修改（包括赞赏码）
+
 
 <p align="center">
   <img src="docs/logo.webp" alt="Episode-ReName Logo" width="200">
