@@ -118,7 +118,7 @@ if len(sys.argv) > 1 and not sys.argv[1].startswith('-'):
     ignore_file_count_check = 0
     log_to_file = 0  # 默认关闭日志文件输出
     log_level = 'INFO'  # 默认日志等级
-    get_nc_name = 0
+    get_nc_name = 1 # 是否识别 NC_Raws 组名
     allow_sp = 0  # 是否整理SP
 else:
     # 新的argparse解析
@@ -228,8 +228,8 @@ else:
         default='INFO',
     )
     ap.add_argument('--no_ncraws', required=False,
-                    help='是否识别NC_Raws组的命名，默认为0识别，1是不识别', type=int,
-                    default=0)
+                    help='是否识别NC_Raws组的命名，默认为1不识别，0是识别', type=int,
+                    default=1)
     ap.add_argument('--allow_sp', required=False,
                     help='是否整理SP文件，默认为0不识别，1是识别', type=int,
                     default=0)

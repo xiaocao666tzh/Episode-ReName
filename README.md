@@ -2,7 +2,9 @@
 本分支根据个人需求进行部分修改，暂不打算在Realease发布打包版，如有需要请自行打包。
 ## 新增内容
 - name_format 支持 {group} {stream} {encode} 分别对应制作组/字幕组，流媒体，视频编码
-- 由于 NC_Raws （写本文时名为 黒ネズミたち）经常改名的特性，加入 --no_ncraws 方法，默认为0识别，1为不识别
+- 由于 NC_Raws （写本文时名为 黒ネズミたち）经常改名的特性，加入 --no_ncraws 方法，默认为1不识别，0为识别
+- 加入 --allow_sp 方法，识别SP文件，默认为0不识别，1为识别  
+目前以VCB-Studio组的命名方式进行测试，重命名为 `[Nekomoe kissaten&VCB-Studio] Bokutachi wa Benkyou ga Dekinai [CM01][Ma10p_1080p][x265_flac].mkv -> S01ECM01.mkv`
 
 ## 以下内容均为原作者README，未进行修改（包括赞赏码）
 
