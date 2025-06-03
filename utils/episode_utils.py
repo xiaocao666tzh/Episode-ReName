@@ -176,7 +176,7 @@ def extract_ep_from_outside_brackets(file_name, bracket_pairs, res):
     return season, ep
 
 
-def get_season_and_ep(file_path, ignores, force_rename=0):
+def get_season_and_ep(file_path, ignores, force_rename=0, allow_sp=0):
     """
     从文件路径中解析季数和集数
 
@@ -184,6 +184,7 @@ def get_season_and_ep(file_path, ignores, force_rename=0):
         file_path: 文件路径
         ignores: 忽略字符串列表
         force_rename: 是否强制重命名
+        allow_sp: 是否允许重命名SP集数
 
     Returns:
         tuple: (season, ep) 季数和集数
@@ -284,6 +285,12 @@ def get_season_and_ep(file_path, ignores, force_rename=0):
         # 兼容END命名
         r'(\d{1,4}(\.5)?)\s?(?:_)?(?i:END)?',
     ]
+    if allow_sp:
+        sp_patterns = [r'[Ss][Pp](\d{1,4}(\.5)?)',
+                     r'[Cc][Mm](\d{1,4}(\.5)?)',
+                     r'[Mm][Ee][Nn][Uu](\d{1,4}(\.5)?)',
+                     r'[Nn][Cc][Ee][Dd]',
+                     r'[Nn][Cc][Oo][Pp]']
     # 括号和内容组合起来
     pats = []
     for pattern in patterns:
@@ -295,6 +302,19 @@ def get_season_and_ep(file_path, ignores, force_rename=0):
         if res:
             ep = res.group(1)
             break
+    if allow_sp:
+        pats = []
+        for pattern in sp_patterns:
+            for bracket_pair in bracket_pairs:
+                pats.append(bracket_pair[0] + pattern + bracket_pair[1])
+        # 查找
+        for pat in pats:
+            # 获取整个括号内的内容
+            bracket_content_match = re.search(pat, file_name)
+            if bracket_content_match:
+                ep = bracket_content_match.group()
+                ep = ep[1:-1] # 去掉括号
+                break
 
     if not ep:
         logger.info(f"括号内未识别到集数，开始寻找括号外内容")

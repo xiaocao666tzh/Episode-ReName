@@ -119,6 +119,7 @@ if len(sys.argv) > 1 and not sys.argv[1].startswith('-'):
     log_to_file = 0  # 默认关闭日志文件输出
     log_level = 'INFO'  # 默认日志等级
     get_nc_name = 0
+    allow_sp = 0  # 是否整理SP
 else:
     # 新的argparse解析
     # python EpisodeReName.py --path E:\test\极端试验样本\S1 --delay 1 --overwrite 1
@@ -229,6 +230,9 @@ else:
     ap.add_argument('--no_ncraws', required=False,
                     help='是否识别NC_Raws组的命名，默认为0识别，1是不识别', type=int,
                     default=0)
+    ap.add_argument('--allow_sp', required=False,
+                    help='是否整理SP文件，默认为0不识别，1是识别', type=int,
+                    default=0)
 
     args = vars(ap.parse_args())
     target_path = args['path']
@@ -236,7 +240,6 @@ else:
     rename_overwrite = args['overwrite']
     name_format = args['name_format']
     name_format_bypass = args['name_format_bypass']
-    print(name_format)
     parse_resolution = args['parse_resolution']
     force_rename = args['force_rename']
     custom_replace_pair = args['replace']
@@ -248,6 +251,7 @@ else:
     log_to_file = args['log_to_file']
     log_level = args['log_level']
     get_nc_name = args['no_ncraws']
+    allow_sp = args['allow_sp']
 
     # if parse_resolution:
         # name_format = 'S{season}E{ep} - {resolution}'
@@ -386,7 +390,7 @@ if os.path.isdir(target_path):
 
             parent_folder_path = os.path.dirname(file_path)
             try:
-                season, ep = get_season_and_ep(file_path, ignores, force_rename)
+                season, ep = get_season_and_ep(file_path, ignores, force_rename, allow_sp)
             except ValueError as e:
                 logger.error(e)
                 season, ep = None, None
@@ -448,7 +452,7 @@ else:
     file_name, ext = get_file_name_ext(file_full_name)
     parent_folder_path = os.path.dirname(file_path)
     if ext.lower() in COMPOUND_EXTS:
-        season, ep = get_season_and_ep(file_path, ignores, force_rename)
+        season, ep = get_season_and_ep(file_path, ignores, force_rename, allow_sp)
         # 是否从父级目录获取季数
         if use_folder_as_season:
             season = get_season_cascaded(file_path)
