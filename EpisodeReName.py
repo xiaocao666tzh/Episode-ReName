@@ -118,8 +118,9 @@ if len(sys.argv) > 1 and not sys.argv[1].startswith('-'):
     ignore_file_count_check = 0
     log_to_file = 0  # 默认关闭日志文件输出
     log_level = 'INFO'  # 默认日志等级
-    get_nc_name = 1 # 是否识别 NC_Raws 组名
+    get_nc_name = 1  # 是否识别 NC_Raws 组名
     allow_sp = 0  # 是否整理SP
+    dry_run = 0  # 是否模拟运行
 else:
     # 新的argparse解析
     # python EpisodeReName.py --path E:\test\极端试验样本\S1 --delay 1 --overwrite 1
@@ -233,6 +234,9 @@ else:
     ap.add_argument('--allow_sp', required=False,
                     help='是否整理SP文件，默认为0不识别，1是识别', type=int,
                     default=0)
+    ap.add_argument('--dry_run', required=False,
+                    help='是否为模拟运行模式，模拟运行下将不执行重命名操作，默认为0不是，1为是', type=int,
+                    default=0)
 
     args = vars(ap.parse_args())
     target_path = args['path']
@@ -252,6 +256,7 @@ else:
     log_level = args['log_level']
     get_nc_name = args['no_ncraws']
     allow_sp = args['allow_sp']
+    dry_run = args['dry_run']
 
     # if parse_resolution:
         # name_format = 'S{season}E{ep} - {resolution}'
@@ -613,8 +618,11 @@ for index, (old, new) in enumerate(file_lists, 1):
                 if not (first_match.lower() in file_full_name.lower()):
                     logger.info(f'已存在文件情况下，新文件未满足第一组匹配规则，删除当前文件: {old}')
                     try:
-                        os.remove(old)
-                        logger.info(f"✓ 文件删除成功: {old}")
+                        if not dry_run:
+                            os.remove(old)
+                            logger.info(f"✓ 文件删除成功: {old}")
+                        else:
+                            logger.info(f"✓ (模拟模式)删除文件: {old}")
                     except Exception as e:
                         logger.error(f"文件删除失败: {old}, 错误: {str(e)}")
                     continue
@@ -627,8 +635,11 @@ for index, (old, new) in enumerate(file_lists, 1):
         tmp_name = new + '.new'
         logger.info(f"步骤1: 重命名 {old} -> {tmp_name} (临时文件)")
         try:
-            os.rename(old, tmp_name)
-            logger.info(f"✓ 临时重命名成功: {old} -> {tmp_name}")
+            if not dry_run:
+                os.rename(old, tmp_name)
+                logger.info(f"✓ 临时重命名成功: {old} -> {tmp_name}")
+            else:
+                logger.info(f"✓ (模拟模式)临时重命名: {old} -> {tmp_name}")
         except Exception as e:
             logger.error(f"临时重命名失败: {old} -> {tmp_name}, 错误: {str(e)}")
             raise  # 重新抛出异常，让外层的异常处理捕获
@@ -637,8 +648,11 @@ for index, (old, new) in enumerate(file_lists, 1):
         if os.path.exists(new):
             logger.info(f"步骤2: 删除已存在的目标文件 {new}")
             try:
-                os.remove(new)
-                logger.info(f"✓ 目标文件删除成功: {new}")
+                if not dry_run:
+                    os.remove(new)
+                    logger.info(f"✓ 目标文件删除成功: {new}")
+                else:
+                    logger.info(f"✓ (模拟模式)目标文件删除: {new}")
             except Exception as e:
                 logger.error(f"目标文件删除失败: {new}, 错误: {str(e)}")
                 raise  # 重新抛出异常，让外层的异常处理捕获
@@ -646,15 +660,21 @@ for index, (old, new) in enumerate(file_lists, 1):
         # 临时文件重命名
         logger.info(f"步骤3: 重命名 {tmp_name} -> {new} (最终文件)")
         try:
-            os.rename(tmp_name, new)
-            logger.info(f"✓ 重命名成功: {os.path.basename(old)} -> {os.path.basename(new)}")
+            if not dry_run:
+                os.rename(tmp_name, new)
+                logger.info(f"✓ 重命名成功: {os.path.basename(old)} -> {os.path.basename(new)}")
+            else:
+                logger.info(f"✓ (模拟模式)重命名: {os.path.basename(old)} -> {os.path.basename(new)}")
         except Exception as e:
             logger.error(f"最终重命名失败: {tmp_name} -> {new}, 错误: {str(e)}")
             # 尝试恢复原始文件
             try:
                 logger.warning(f"尝试恢复原始文件: {tmp_name} -> {old}")
-                os.rename(tmp_name, old)
-                logger.info(f"✓ 原始文件恢复成功: {tmp_name} -> {old}")
+                if not dry_run:
+                    os.rename(tmp_name, old)
+                    logger.info(f"✓ 原始文件恢复成功: {tmp_name} -> {old}")
+                else:
+                    logger.info(f"✓ (模拟模式)原始文件恢复: {tmp_name} -> {old}")
             except Exception as recover_error:
                 logger.error(f"原始文件恢复失败: {tmp_name} -> {old}, 错误: {str(recover_error)}")
             raise  # 重新抛出原始异常，让外层的异常处理捕获
