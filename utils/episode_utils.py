@@ -290,7 +290,11 @@ def get_season_and_ep(file_path, ignores, force_rename=0, allow_sp=0):
                      r'[Cc][Mm](\d{1,4}(\.5)?)',
                      r'[Mm][Ee][Nn][Uu](\d{1,4}(\.5)?)',
                      r'[Nn][Cc][Ee][Dd]',
-                     r'[Nn][Cc][Oo][Pp]']
+                     r'[Nn][Cc][Oo][Pp]',
+                     r'[Rr][Ee][Vv][Ii][Ee][Ww](\d{1,4}(\.5)?)',
+                     r'[Pp][Rr][Ee][Vv][Ii][Ee][Ww](\d{1,4}(\.5)?)',
+                     r'[Pp][Vv](\d{1,4}(\.5)?)',
+                     ]
     # 括号和内容组合起来
     pats = []
     for pattern in patterns:
@@ -314,6 +318,7 @@ def get_season_and_ep(file_path, ignores, force_rename=0, allow_sp=0):
             if bracket_content_match:
                 ep = bracket_content_match.group()
                 ep = ep[1:-1] # 去掉括号
+                ep = f"00 - {ep}"
                 break
 
     if not ep:
@@ -343,8 +348,8 @@ def get_season_and_ep(file_path, ignores, force_rename=0, allow_sp=0):
             season = season_from_outside
 
     season = zero_fix(season)
-    ep = zero_fix(ep)
-
+    if '-' not in ep:
+        ep = zero_fix(ep)
     return season, ep
 
 
@@ -505,5 +510,7 @@ def ep_offset_patch(file_path, ep, application_path):
         except Exception as e:
             logger.error(f"应用集数修正时出错: {str(e)}")
             return ep
-
-    return zero_fix(ep)
+    if '-' not in ep:
+        return zero_fix(ep)
+    else:
+        return ep
