@@ -348,8 +348,11 @@ def get_season_and_ep(file_path, ignores, force_rename=0, allow_sp=0):
             season = season_from_outside
 
     season = zero_fix(season)
-    if '-' not in ep:
-        ep = zero_fix(ep)
+    try:
+        if '-' not in ep:
+            ep = zero_fix(ep)
+    except TypeError:
+        pass # 如果 ep 为 None 判断会报错
     return season, ep
 
 
