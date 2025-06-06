@@ -32,6 +32,8 @@ COMMON_LANG = [
     'cht&jap',
     'scjp',
     'tcjp',
+    'sc_jp',
+    'tc_jp',
     # 一般命名
     'cn',
     'chs',
