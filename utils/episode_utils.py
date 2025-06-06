@@ -287,13 +287,23 @@ def get_season_and_ep(file_path, ignores, force_rename=0, allow_sp=0):
     ]
     if allow_sp:
         sp_patterns = [r'[Ss][Pp](\d{1,4}(\.5)?)',
+                     r'[Ss][Pp]',
                      r'[Cc][Mm](\d{1,4}(\.5)?)',
+                     r'[Cc][Mm]',
                      r'[Mm][Ee][Nn][Uu](\d{1,4}(\.5)?)',
+                     r'[Mm][Ee][Nn][Uu]',
                      r'[Nn][Cc][Ee][Dd]',
+                     r'[Nn][Cc][Ee][Dd](\d{1,4}(\.5)?)',
                      r'[Nn][Cc][Oo][Pp]',
+                     r'[Nn][Cc][Oo][Pp](\d{1,4}(\.5)?)',
                      r'[Rr][Ee][Vv][Ii][Ee][Ww](\d{1,4}(\.5)?)',
+                     r'[Rr][Ee][Vv][Ii][Ee][Ww]',
                      r'[Pp][Rr][Ee][Vv][Ii][Ee][Ww](\d{1,4}(\.5)?)',
+                     r'[Pp][Rr][Ee][Vv][Ii][Ee][Ww]',
                      r'[Pp][Vv](\d{1,4}(\.5)?)',
+                     r'[Pp][Vv]',
+                     r'[Oo][Aa][Dd]',
+                     r'[Oo][Aa][Dd](\d{1,4}(\.5)?)',
                      ]
     # 括号和内容组合起来
     pats = []
