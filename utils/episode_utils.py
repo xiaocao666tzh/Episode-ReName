@@ -310,6 +310,16 @@ def get_season_and_ep(file_path, ignores, force_rename=0, allow_sp=0):
                      r'[Mm][Aa][Kk][Ii][Nn][Gg]',
                      r'[Mm][Vv][Cc][Ss](\d{1,4})(?:_(\d{1,4}))?(\.5)?',
                      r'[Mm][Vv][Cc][Ss]',
+                     r'[Pp][Rr][Gg][Rr][Aa][Mm](\d{1,4})(?:_(\d{1,4}))?(\.5)?',
+                     r'[Pp][Rr][Gg][Rr][Aa][Mm]',
+                     r'[Dd][Rr][Aa][Mm][Aa](\d{1,4})(?:_(\d{1,4}))?(\.5)?',
+                     r'[Dd][Rr][Aa][Mm][Aa]',
+                     r'[Mm][Vv](\d{1,4})(?:_(\d{1,4}))?(\.5)?',
+                     r'[Mm][Vv]',
+                     r'[Ee][Vv][Ee][Nn][Tt](\d{1,4})(?:_(\d{1,4}))?(\.5)?',
+                     r'[Ee][Vv][Ee][Nn][Tt]',
+                     r'[Oo][Vv][Aa](\d{1,4})(?:_(\d{1,4}))?(\.5)?',
+                     r'[Oo][Vv][Aa]',
                      ]
     # 括号和内容组合起来
     pats = []
