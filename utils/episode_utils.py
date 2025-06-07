@@ -348,6 +348,14 @@ def get_season_and_ep(file_path, ignores, force_rename=0, allow_sp=0):
                 break
 
     if not ep:
+        parent_folder = os.path.basename(parent_folder_path)
+        if allow_sp and parent_folder == 'SPs':
+            if 'VCB-S' in file_path:
+                bracket_matches = re.findall(r'\[(.*?)\]', file_name)
+                if len(bracket_matches) >= 2:
+                    ep = f"00 - {bracket_matches[1]}"
+                    logger.info(f"VCB-S SPs目录特殊处理: S{season}E{ep}")
+                    return zero_fix(season), ep
         logger.info(f"括号内未识别到集数，开始寻找括号外内容")
         # 把括号当分隔符排除掉括号内的文字
         pat = ''
