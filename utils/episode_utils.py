@@ -462,83 +462,84 @@ def ep_offset_patch(file_path, ep, application_path):
                                     pass
     # 集数修正
     if offset_str:
-        try:
-            offset_str = offset_str.strip().replace(' ', '')
+        if '-' not in ep:
+            try:
+                offset_str = offset_str.strip().replace(' ', '')
 
-            if '|' not in offset_str:
-                logger.info(f'单一数字类型的offset: {offset_str}')
-                # 直接取整数, 正数为减少, 负数是增加
-                offset = int(offset_str)
-            else:
-                logger.info(f'多组数据的offset解析: {offset_str}')
-                # 和 QRM 多组匹配对应的多组offset
-                # 比如: 格式 `12|0|-11` 第一组集数减12, 第二组不变, 第三组加11
-
-                if not qrm_config:
-                    logger.info('未获取到QRM的配置，默认取第一个offset')
-                    offset = int(offset_str.split('|')[0].strip())
-                    logger.debug(f'使用第一个offset值: {offset}')
+                if '|' not in offset_str:
+                    logger.info(f'单一数字类型的offset: {offset_str}')
+                    # 直接取整数, 正数为减少, 负数是增加
+                    offset = int(offset_str)
                 else:
-                    # 查找QRM配置匹配的组序号
-                    index = 0
-                    logger.debug(f'开始查找QRM配置匹配的组序号')
+                    logger.info(f'多组数据的offset解析: {offset_str}')
+                    # 和 QRM 多组匹配对应的多组offset
+                    # 比如: 格式 `12|0|-11` 第一组集数减12, 第二组不变, 第三组加11
 
-                    for data_group in qrm_config['data_dump']['data_groups']:
-                        for x in data_group['data']:
-                            if format_path(x['savePath']) == format_path(season_path):
-                                try:
-                                    must_contain_tmp = x['mustContain']
-                                    logger.debug(f'找到匹配的保存路径，mustContain: {must_contain_tmp}')
-
-                                    if '|' not in must_contain_tmp:
-                                        logger.debug('mustContain不包含多组数据，使用默认index=0')
-                                        break
-                                    else:
-                                        for i, keywords in enumerate(must_contain_tmp.split('|')):
-                                            keywords_list = keywords.strip().split(' ')
-                                            logger.debug(f'检查第{i+1}组关键词: {keywords_list}')
-
-                                            if all([keyword.strip() in file_path for keyword in keywords_list]):
-                                                index = i
-                                                logger.debug(f'文件路径匹配第{i+1}组关键词，使用index={index}')
-                                                break
-                                except Exception as e:
-                                    logger.error(f'解析mustContain时出错: {str(e)}')
-
-                    # 获取offset
-                    offset_parts = offset_str.split('|')
-                    if index < len(offset_parts):
-                        offset = int(offset_parts[index].strip())
-                        logger.info(f'使用第{index+1}组offset值: {offset}')
+                    if not qrm_config:
+                        logger.info('未获取到QRM的配置，默认取第一个offset')
+                        offset = int(offset_str.split('|')[0].strip())
+                        logger.debug(f'使用第一个offset值: {offset}')
                     else:
-                        logger.warning(f'索引{index}超出offset分组范围，使用第一个offset')
-                        offset = int(offset_parts[0].strip())
+                        # 查找QRM配置匹配的组序号
+                        index = 0
+                        logger.debug(f'开始查找QRM配置匹配的组序号')
 
-            # 处理带小数点的集数（如12.5）
-            if '.' in ep:
-                ep_int, ep_tail = ep.split('.')
-                ep_int = int(ep_int)
+                        for data_group in qrm_config['data_dump']['data_groups']:
+                            for x in data_group['data']:
+                                if format_path(x['savePath']) == format_path(season_path):
+                                    try:
+                                        must_contain_tmp = x['mustContain']
+                                        logger.debug(f'找到匹配的保存路径，mustContain: {must_contain_tmp}')
 
-                # 只有当集数大于等于offset时才进行修正（防止负数集数）
-                if int(ep_int) >= offset:
-                    original_ep = ep
-                    ep_int = ep_int - offset
-                    ep = str(ep_int) + '.' + ep_tail
-                    logger.info(f"集数修正: {original_ep} -> {ep} (offset={offset})")
+                                        if '|' not in must_contain_tmp:
+                                            logger.debug('mustContain不包含多组数据，使用默认index=0')
+                                            break
+                                        else:
+                                            for i, keywords in enumerate(must_contain_tmp.split('|')):
+                                                keywords_list = keywords.strip().split(' ')
+                                                logger.debug(f'检查第{i+1}组关键词: {keywords_list}')
+
+                                                if all([keyword.strip() in file_path for keyword in keywords_list]):
+                                                    index = i
+                                                    logger.debug(f'文件路径匹配第{i+1}组关键词，使用index={index}')
+                                                    break
+                                    except Exception as e:
+                                        logger.error(f'解析mustContain时出错: {str(e)}')
+
+                        # 获取offset
+                        offset_parts = offset_str.split('|')
+                        if index < len(offset_parts):
+                            offset = int(offset_parts[index].strip())
+                            logger.info(f'使用第{index+1}组offset值: {offset}')
+                        else:
+                            logger.warning(f'索引{index}超出offset分组范围，使用第一个offset')
+                            offset = int(offset_parts[0].strip())
+
+                # 处理带小数点的集数（如12.5）
+                if '.' in ep:
+                    ep_int, ep_tail = ep.split('.')
+                    ep_int = int(ep_int)
+
+                    # 只有当集数大于等于offset时才进行修正（防止负数集数）
+                    if int(ep_int) >= offset:
+                        original_ep = ep
+                        ep_int = ep_int - offset
+                        ep = str(ep_int) + '.' + ep_tail
+                        logger.info(f"集数修正: {original_ep} -> {ep} (offset={offset})")
+                    else:
+                        logger.warning(f"集数({ep_int})小于offset({offset})，不进行修正")
                 else:
-                    logger.warning(f"集数({ep_int})小于offset({offset})，不进行修正")
-            else:
-                # 处理整数集数
-                ep_int = int(ep)
-                if ep_int >= offset:
-                    original_ep = ep
-                    ep = str(ep_int - offset)
-                    logger.info(f"集数修正: {original_ep} -> {ep} (offset={offset})")
-                else:
-                    logger.warning(f"集数({ep_int})小于offset({offset})，不进行修正")
-        except Exception as e:
-            logger.error(f"应用集数修正时出错: {str(e)}")
-            return ep
+                    # 处理整数集数
+                    ep_int = int(ep)
+                    if ep_int >= offset:
+                        original_ep = ep
+                        ep = str(ep_int - offset)
+                        logger.info(f"集数修正: {original_ep} -> {ep} (offset={offset})")
+                    else:
+                        logger.warning(f"集数({ep_int})小于offset({offset})，不进行修正")
+            except Exception as e:
+                logger.error(f"应用集数修正时出错: {str(e)}")
+                return ep
     if '-' not in ep:
         return zero_fix(ep)
     else:
