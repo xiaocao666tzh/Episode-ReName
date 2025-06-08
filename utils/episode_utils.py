@@ -269,8 +269,7 @@ def get_season_and_ep(file_path, ignores, force_rename=0):
     ]
     # 内容
     patterns = [
-        # 1到4位数字
-        r'(\d{1,4}(\.5)?)',
+        
         # 特殊文字处理
         r'第(\d{1,4}(\.5)?)集',
         r'第(\d{1,4}(\.5)?)话',
@@ -283,6 +282,8 @@ def get_season_and_ep(file_path, ignores, force_rename=0):
         r'(\d{1,4}(\.5)?)[Vv]?\d?',
         # 兼容END命名
         r'(\d{1,4}(\.5)?)\s?(?:_)?(?i:END)?',
+        # 1到4位数字
+        r'(\d{1,4}(\.5)?)',
     ]
     # 括号和内容组合起来
     pats = []
