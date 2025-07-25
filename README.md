@@ -1,5 +1,5 @@
 # 📝 Episode-ReName
-本分支根据个人需求进行部分修改，暂不打算在Realease发布打包版，如有需要请自行打包。
+本分支根据个人需求进行部分修改，~~暂不打算在Realease发布打包版，如有需要请自行打包。~~ 已在Release发布发行版，使用Github Actions打包，默认打包 Windows和MacOS两个版本。以后开发将在 dev 分支进行，每次commit之后也会用Actions打包。
 ## 新增内容
 - name_format 支持 {group} {stream} {encode} 分别对应制作组/字幕组，流媒体，视频编码
 - 由于 NC_Raws （写本文时名为 黒ネズミたち）经常改名的特性，加入 --no_ncraws 方法，默认为1不识别，0为识别
