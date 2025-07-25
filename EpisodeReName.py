@@ -40,6 +40,7 @@ from utils.path_utils import (
 from utils.resolution_utils import get_resolution_in_name, resolution_dict
 from utils.season_utils import get_season_cascaded, get_season, get_season_path
 from utils.series_utils import get_series_from_season_path
+from jinja2 import Template, Environment, BaseLoader
 
 # print('''
 #     -- 警告 --
@@ -404,13 +405,15 @@ if os.path.isdir(target_path):
                 season = get_season_cascaded(file_path)
 
             resolution = get_resolution_in_name(name)
-            if '{group}' in name_format:
-                group = get_group_in_name(file_name, get_nc_name)
-                if group == '' and file_path.find('7³ACG') != -1:
-                    group = '7³ACG'
+
+            group = get_group_in_name(file_name, get_nc_name)
+            if group == '' and file_path.find('7³ACG') != -1:
+                group = '7³ACG' # 7³ACG 特殊处理，从文件夹获取group名
+            
             stream = get_stream_in_name(name)
             if file_name.find('VCB-Studio') != -1:
                 stream = 'BDRip'
+            
             encode = get_encode_in_name(name)
             logger.info(f'{season, ep}')
             # 重命名
@@ -427,16 +430,40 @@ if os.path.isdir(target_path):
                     logger.info('命名已满足 name_format 跳过')
                     continue
 
-                new_name = clean_name(name_format.format(**locals())) + '.' + fix_ext(ext)
-
-
+                # 判断模板类型并选择渲染方式
+                if '{{' in name_format or '{%' in name_format:
+                    # Jinja2模板渲染
+                    env = Environment(loader=BaseLoader())
+                    template = env.from_string(name_format)
+                    rendered = template.render(
+                        season=season,
+                        ep=ep,
+                        resolution=resolution,
+                        encode=encode,
+                        stream=stream,
+                        group=group,
+                        series=series
+                    )
+                else:
+                    # 传统Python格式字符串
+                    rendered = name_format.format(
+                        season=season,
+                        ep=ep,
+                        resolution=resolution,
+                        encode=encode,
+                        stream=stream,
+                        group=group,
+                        series=series
+                    )
+                
+                new_name = clean_name(rendered) + '.' + fix_ext(ext)
                 if custom_replace_pair:
                     # 自定义替换关键字
                     for replace_old_part, replace_new_part in custom_replace_pair:
                         new_name = new_name.replace(replace_old_part, replace_new_part)
 
-                while '__' in new_name or '-_' in new_name:
-                    new_name = new_name.replace('__', '_').replace('- _', '-').rstrip('_')
+                # while '__' in new_name or '-_' in new_name:
+                    # new_name = new_name.replace('__', '_').replace('- _', '-').rstrip('_')
                 logger.info(f'{new_name}')
                 if move_up_to_season_folder:
                     new_path = season_path + '/' + new_name
@@ -486,7 +513,14 @@ else:
             ):
                 logger.info('当前命名已满足 name_format 的格式, 退出')
                 exit()
-            new_name = clean_name(name_format.format(**locals())) + '.' + fix_ext(ext)
+            try:
+                # 先尝试直接作为Jinja2模板使用
+                template = Template(name_format)
+                new_name = clean_name(template.render(**locals()))
+            except TemplateSyntaxError:
+                new_name = clean_name(name_format.format(**locals()))
+            
+            new_name = new_name + '.' + fix_ext(ext)
             while '__' in new_name or '-_' in new_name:
                 new_name = new_name.replace('__', '_').replace('- _', '-').rstrip('_')
 

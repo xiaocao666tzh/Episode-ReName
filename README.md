@@ -5,7 +5,8 @@
 - 由于 NC_Raws （写本文时名为 黒ネズミたち）经常改名的特性，加入 --no_ncraws 方法，默认为1不识别，0为识别
 - 加入 --allow_sp 方法，识别SP文件，默认为0不识别，1为识别  
 目前以VCB-Studio组的命名方式进行测试，重命名为 `[Nekomoe kissaten&VCB-Studio] Bokutachi wa Benkyou ga Dekinai [CM01][Ma10p_1080p][x265_flac].mkv -> S01E00 - CM01.mkv`  
-- 加入 --dry_run 方法，模拟运行，不执行重命名，默认为0直接重命名，1为不执行重命名
+- 加入 `--dry_run` 方法，模拟运行，不执行重命名，默认为0直接重命名，1为不执行重命名
+- name_format 在保留对原有语法的支持下，新增支持Jinja2语法，比如我目前在用的 name_format `S{{season}}E{{ep}}{% if resolution %} - {{resolution}}{% endif %}{% if encode %}_{{encode}}{% endif %}{% if stream %}_{{stream}}{% endif %}{% if group %}_{{group}}{% endif %}`
 
 ## 以下内容均为原作者README，未进行修改（包括赞赏码）
 
