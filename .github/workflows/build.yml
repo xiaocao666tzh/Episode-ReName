@@ -1,12 +1,17 @@
-name: Build Windows and MacOS Binary
+name: Build Multi-Platform Binaries
 
 on:
   push:
   workflow_dispatch:
 
+env:
+  PYTHON_VERSION: '3.9'
+  FILE_NAME: EpisodeReName.py
+  APP_NAME: EpisodeReName
+
 jobs:
   build-windows:
-    name: Build Windows
+    name: Build Windows x64
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -14,7 +19,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9'
+          python-version: ${{ env.PYTHON_VERSION }}
           
       - name: Install dependencies
         run: |
@@ -23,51 +28,162 @@ jobs:
           pip install pyinstaller
           
       - name: Build EXE
-        run: pyinstaller -F --icon=logo.ico EpisodeReName.py
-          
+        run: pyinstaller -F --icon=logo.ico ${{ env.FILE_NAME }}
+
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: EpisodeReName-Windows
-          path: dist/EpisodeReName.exe
+          name: ${{ env.APP_NAME }}-windows-x64.exe
+          path: dist/${{ env.APP_NAME }}.exe
 
-  build-macos:
-    name: Build macOS
-    runs-on: macos-latest
+  build-windows-arm64:
+    if: startsWith(github.ref, 'refs/tags/v')
+    name: Build Windows ARM64 (Cross)
+    runs-on: windows-2022
     steps:
       - uses: actions/checkout@v4
       
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9'
-          
+          python-version: ${{ env.PYTHON_VERSION }}
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pyinstaller
-          
-      - name: Build macOS App
-        run: |
-          pyinstaller -F --icon=logo.icns EpisodeReName.py
-          chmod +x dist/EpisodeReName
-          
+
+      - name: Build EXE (simulate ARM64)
+        run: pyinstaller -F --icon=logo.ico ${{ env.FILE_NAME }}
+
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: EpisodeReName-macOS
-          path: dist/EpisodeReName
+          name: ${{ env.APP_NAME }}-windows-arm64.exe
+          path: dist/${{ env.APP_NAME }}.exe
 
-  release:
-    name: Create Release
-    needs: [build-windows, build-macos]
+  build-macos-x64:
     if: startsWith(github.ref, 'refs/tags/v')
+    name: Build macOS x64
+    runs-on: macos-13
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Build
+        run: |
+          pyinstaller -F --icon=logo.icns ${{ env.FILE_NAME }}
+          chmod +x dist/${{ env.APP_NAME }}
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.APP_NAME }}-macos-x64
+          path: dist/${{ env.APP_NAME }}
+
+  build-macos-arm64:
+    if: startsWith(github.ref, 'refs/tags/v')
+    name: Build macOS ARM64
+    runs-on: macos-14 # M1 runner
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Build
+        run: |
+          pyinstaller -F --icon=logo.icns ${{ env.FILE_NAME }}
+          chmod +x dist/${{ env.APP_NAME }}
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.APP_NAME }}-macos-arm64
+          path: dist/${{ env.APP_NAME }}
+
+  build-linux-x64:
+    if: startsWith(github.ref, 'refs/tags/v')
+    name: Build Linux x64
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Download Artifacts
-        uses: actions/download-artifact@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Build
+        run: pyinstaller -F ${{ env.FILE_NAME }}
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.APP_NAME }}-linux-x64
+          path: dist/${{ env.APP_NAME }}
+
+  build-linux-arm64:
+    if: startsWith(github.ref, 'refs/tags/v')
+    name: Build Linux ARM64
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pyinstaller
+      - name: Build
+        run: pyinstaller -F ${{ env.FILE_NAME }}
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.APP_NAME }}-linux-arm64
+          path: dist/${{ env.APP_NAME }}
+
+  release:
+    name: Create Release
+    needs:
+      - build-windows
+      - build-windows-arm64
+      - build-macos-x64
+      - build-macos-arm64
+      - build-linux-x64
+      - build-linux-arm64
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
         with:
           pattern: EpisodeReName-*
           merge-multiple: true
@@ -76,7 +192,6 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            EpisodeReName.exe
-            EpisodeReName
+            EpisodeReName-*
           body_path: CHANGELOG.md
           token: ${{ secrets.GITHUB_TOKEN }}
