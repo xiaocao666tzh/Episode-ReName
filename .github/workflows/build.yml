@@ -38,8 +38,8 @@ jobs:
 
   build-windows-arm64:
     if: startsWith(github.ref, 'refs/tags/v')
-    name: Build Windows ARM64 (Cross)
-    runs-on: windows-2022
+    name: Build Windows ARM64
+    runs-on: windows-11-arm
     steps:
       - uses: actions/checkout@v4
       
@@ -54,7 +54,7 @@ jobs:
           pip install -r requirements.txt
           pip install pyinstaller
 
-      - name: Build EXE (simulate ARM64)
+      - name: Build EXE
         run: pyinstaller -F --icon=logo.ico ${{ env.FILE_NAME }}
 
       - name: Upload Artifact
@@ -183,15 +183,21 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
         with:
-          pattern: EpisodeReName-*
-          merge-multiple: true
-          
+          path: downloaded
+
+      - name: List downloaded files
+        run: ls -R downloaded
+
       - name: Create Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
+        if: github.ref_type == 'tag'
         with:
           files: |
-            EpisodeReName-*
+            downloaded/**
           body_path: CHANGELOG.md
           token: ${{ secrets.GITHUB_TOKEN }}
