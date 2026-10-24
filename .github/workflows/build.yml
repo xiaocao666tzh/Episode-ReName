@@ -158,7 +158,7 @@ jobs:
       - name: List downloaded files
         run: ls -R downloaded
 
-      - name: 准备 Release 产物
+      - name: Prepare Release artifacts
         run: |
           set -euo pipefail
           VERSION="${GITHUB_REF_NAME#v}"

@@ -1,3 +1,8 @@
+## [1.2.3-rc2] - 2026-10-24
+### Chore
+- 重写了 get_stream_in_name函数，增加了对更多stream名称的识别
+- 修复了 Github Actions Build
+
 ## [1.2.2-rc4] - 2026-06-14
 ### Chore
 - 修复了Github Actions Build
