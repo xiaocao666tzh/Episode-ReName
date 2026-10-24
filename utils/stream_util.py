@@ -3,12 +3,24 @@ import os
 
 def get_stream_in_name(name):
     file_full_name_up = name.upper()
-    stream_file_name = ['.BAHA.', ' BAHA ', '[BAHA]', '(BAHA', '.CR.', ' CR ', '[CR]', '(CR', 'CRUNCHYROLL', 'B-GLOBAL',
-                        'BILIBILI', 'ABEMA', '(AT-X', '(BS11', '(BS4', '(TBS', '(MX', '(TX', 'NETFLIX', ' NF ', '(NF',
-                        '.NF.', '(NF', 'KKTV', 'SENTAI', 'WEBRIP', 'BDRIP', 'WEB']
-    stream_output_name = ['Baha', 'Baha', 'Baha', 'Baha', 'CR', 'CR', 'CR', 'CR', 'CR', 'Bilibili', 'Bilibili', 'Abema',
-                          'AT-X', 'BS11', 'BS4', 'TBS', 'MX', 'TX', 'Netflix', 'Netflix', 'Netflix', 'Netflix',
-                          'Netflix', 'KKTV', 'Sentai', 'WebRip', 'BDRip', 'Web']
+    stream_file_name = [
+        'CRUNCHYROLL', 'B-GLOBAL', 'BILIBILI', '.LINETV.', '[LINETV]', '.FRIDAY.',
+        '[FRIDAY]', 'NETFLIX', '(LINETV', '(FRIDAY', '.BAHA.', ' BAHA ',
+        '[BAHA]', 'SENTAI', '(BAHA', 'ABEMA', '(AT-X', '(BS11',
+        '.VIU.', '[VIU]', '.CR.', ' CR ', '[CR]', '(BS4',
+        '(TBS', ' NF ', '.NF.', 'KKTV', '(VIU', '(CR',
+        '(MX', '(TX', '(NF', '(NF', 'WEBRIP', 'BDRIP',
+        'WEBDL', 'REMUX', 'WEB'
+    ]
+    stream_output_name = [
+        'CR', 'Bilibili', 'Bilibili', 'LINETV', 'LINETV', 'friDay',
+        'friDay', 'Netflix', 'LINETV', 'friDay', 'Baha', 'Baha',
+        'Baha', 'Sentai', 'Baha', 'Abema', 'AT-X', 'BS11',
+        'Viu', 'Viu', 'CR', 'CR', 'CR', 'BS4',
+        'TBS', 'Netflix', 'Netflix', 'KKTV', 'Viu', 'CR',
+        'MX', 'TX', 'Netflix', 'Netflix', 'WebRip', 'BDRip',
+        'WebDL', 'Remux','Web'
+    ]
     for i in range(0, len(stream_file_name)):
         if stream_file_name[i] in file_full_name_up:
             return stream_output_name[i]
