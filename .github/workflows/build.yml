@@ -17,7 +17,7 @@ jobs:
       - uses: actions/checkout@v4
       
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           
@@ -43,7 +43,7 @@ jobs:
       - uses: actions/checkout@v4
       
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
@@ -61,34 +61,6 @@ jobs:
           name: ${{ env.APP_NAME }}-windows-arm64
           path: dist/${{ env.APP_NAME }}.exe
 
-  build-macos-x64:
-    if: startsWith(github.ref, 'refs/tags/v')
-    name: Build macOS x64
-    runs-on: macos-13
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-
-      - name: Build (PyInstaller)
-        run: |
-          pyinstaller -F --clean --noconfirm --name=${{ env.APP_NAME }} --icon=logo.icns --add-data "nc_raws_auto.txt:utils" ${{ env.FILE_NAME }}
-          chmod +x dist/${{ env.APP_NAME }}
-
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ env.APP_NAME }}-macos-x64
-          path: dist/${{ env.APP_NAME }}
-
   build-macos-arm64:
     if: startsWith(github.ref, 'refs/tags/v')
     name: Build macOS ARM64
@@ -97,7 +69,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
@@ -125,7 +97,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
@@ -150,7 +122,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ env.PYTHON_VERSION }}
       - name: Install dependencies
@@ -170,7 +142,6 @@ jobs:
     needs:
       - build-windows
       - build-windows-arm64
-      - build-macos-x64
       - build-macos-arm64
       - build-linux-x64
       - build-linux-arm64
@@ -187,29 +158,16 @@ jobs:
       - name: List downloaded files
         run: ls -R downloaded
 
-      - name: Flatten artifacts for release
+      - name: 准备 Release 产物
         run: |
-          set -e
+          set -euo pipefail
+          VERSION="${GITHUB_REF_NAME#v}"
           mkdir -p release-assets
-          # Windows x64 构建产物
-          [ -f "downloaded/${{ env.APP_NAME }}-windows-x64/${{ env.APP_NAME }}.exe" ] && \
-            cp "downloaded/${{ env.APP_NAME }}-windows-x64/${{ env.APP_NAME }}.exe" "release-assets/${{ env.APP_NAME }}-windows-x64.exe" || true
-          # Windows ARM64 构建产物
-          [ -f "downloaded/${{ env.APP_NAME }}-windows-arm64/${{ env.APP_NAME }}.exe" ] && \
-            cp "downloaded/${{ env.APP_NAME }}-windows-arm64/${{ env.APP_NAME }}.exe" "release-assets/${{ env.APP_NAME }}-windows-arm64.exe" || true
-          # macOS x64 构建产物
-          [ -f "downloaded/${{ env.APP_NAME }}-macos-x64/${{ env.APP_NAME }}" ] && \
-            cp "downloaded/${{ env.APP_NAME }}-macos-x64/${{ env.APP_NAME }}" "release-assets/${{ env.APP_NAME }}-macos-x64" || true
-          # macOS ARM64 构建产物
-          [ -f "downloaded/${{ env.APP_NAME }}-macos-arm64/${{ env.APP_NAME }}" ] && \
-            cp "downloaded/${{ env.APP_NAME }}-macos-arm64/${{ env.APP_NAME }}" "release-assets/${{ env.APP_NAME }}-macos-arm64" || true
-          # Linux x64 构建产物
-          [ -f "downloaded/${{ env.APP_NAME }}-linux-x64/${{ env.APP_NAME }}" ] && \
-            cp "downloaded/${{ env.APP_NAME }}-linux-x64/${{ env.APP_NAME }}" "release-assets/${{ env.APP_NAME }}-linux-x64" || true
-          # Linux ARM64 构建产物
-          [ -f "downloaded/${{ env.APP_NAME }}-linux-arm64/${{ env.APP_NAME }}" ] && \
-            cp "downloaded/${{ env.APP_NAME }}-linux-arm64/${{ env.APP_NAME }}" "release-assets/${{ env.APP_NAME }}-linux-arm64" || true
-          echo "=== Release assets ==="
+          cp "downloaded/${{ env.APP_NAME }}-windows-x64/${{ env.APP_NAME }}.exe" "release-assets/Episode-ReName_${VERSION}_windows-x64.exe"
+          cp "downloaded/${{ env.APP_NAME }}-windows-arm64/${{ env.APP_NAME }}.exe" "release-assets/Episode-ReName_${VERSION}_windows-arm64.exe"
+          cp "downloaded/${{ env.APP_NAME }}-macos-arm64/${{ env.APP_NAME }}" "release-assets/Episode-ReName_${VERSION}_macos-arm64.bin"
+          cp "downloaded/${{ env.APP_NAME }}-linux-x64/${{ env.APP_NAME }}" "release-assets/Episode-ReName_${VERSION}_linux-x64.bin"
+          cp "downloaded/${{ env.APP_NAME }}-linux-arm64/${{ env.APP_NAME }}" "release-assets/Episode-ReName_${VERSION}_linux-arm64.bin"
           ls -la release-assets/
 
       - name: Generate release notes
